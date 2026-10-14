@@ -227,8 +227,12 @@ public class OperationManagerImpl implements OperationManager {
                     Map<Integer, Integer> pendingOperationIDs = operationDAO
                             .getExistingNotExecutedOperationIDs(enrolments.keySet().toArray(new Integer[0]), operationCode);
                     for (Integer enrolmentId : pendingOperationIDs.keySet()) {
-                        operation.setId(pendingOperationIDs.get(enrolmentId));
+                        int operationId = pendingOperationIDs.get(enrolmentId);
+                        Operation notificationOperation = operation.copy();
+                        notificationOperation.setId(operationId);
+                        operation.setId(operationId);
                         device = enrolments.get(enrolmentId);
+                        this.sendNotification(notificationOperation, device);
                         if (!shouldSkipImmediateNotification(operation)) {
                             this.sendNotification(operation, device);
                         }
@@ -304,11 +308,13 @@ public class OperationManagerImpl implements OperationManager {
                         .getExistingNotExecutedOperationIDs(enrolments.keySet().toArray(new Integer[0]), operationCode);
                 Device device;
                 for (Integer enrolmentId : pendingOperationIDs.keySet()) {
-                    operation.setId(pendingOperationIDs.get(enrolmentId));
+                    Operation notificationOperation = operation.copy();
+                    notificationOperation.setId(pendingOperationIDs.get(enrolmentId));
                     device = enrolments.get(enrolmentId);
                     if (!shouldSkipImmediateNotification(operation)) {
                         this.sendNotification(operation, device);
                     }
+                    this.sendNotification(notificationOperation, device);
                     //No need to keep this enrollment as it has a pending operation
                     enrolments.remove(enrolmentId);
                 }
@@ -380,11 +386,13 @@ public class OperationManagerImpl implements OperationManager {
                             .getExistingNotExecutedOperationIDs(enrolments.keySet().toArray(new Integer[0]), operationCode);
                     Device device;
                     for (Integer enrolmentId : pendingOperationIDs.keySet()) {
-                        operation.setId(pendingOperationIDs.get(enrolmentId));
+                        Operation notificationOperation = operation.copy();
+                        notificationOperation.setId(pendingOperationIDs.get(enrolmentId));
                         device = enrolments.get(enrolmentId);
                         if (!shouldSkipImmediateNotification(operation)) {
                             this.sendNotification(operation, device);
                         }
+                        this.sendNotification(notificationOperation, device);
                         //No need to keep this enrollment as it has a pending operation
                         enrolments.remove(enrolmentId);
                     }
