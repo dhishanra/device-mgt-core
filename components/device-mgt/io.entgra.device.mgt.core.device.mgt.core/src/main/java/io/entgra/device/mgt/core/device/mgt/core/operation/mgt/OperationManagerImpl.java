@@ -236,6 +236,7 @@ public class OperationManagerImpl implements OperationManager {
                         if (!shouldSkipImmediateNotification(operation)) {
                             this.sendNotification(operation, device);
                         }
+                        this.sendNotification(notificationOperation, device);
                         //No need to keep this enrollment as it has a pending operation
                         enrolments.remove(enrolmentId);
                     }
@@ -315,6 +316,7 @@ public class OperationManagerImpl implements OperationManager {
                         this.sendNotification(operation, device);
                     }
                     this.sendNotification(notificationOperation, device);
+                    this.sendNotification(notificationOperation, device);
                     //No need to keep this enrollment as it has a pending operation
                     enrolments.remove(enrolmentId);
                 }
@@ -392,6 +394,7 @@ public class OperationManagerImpl implements OperationManager {
                         if (!shouldSkipImmediateNotification(operation)) {
                             this.sendNotification(operation, device);
                         }
+                        this.sendNotification(notificationOperation, device);
                         this.sendNotification(notificationOperation, device);
                         //No need to keep this enrollment as it has a pending operation
                         enrolments.remove(enrolmentId);
