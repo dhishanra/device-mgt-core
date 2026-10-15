@@ -498,6 +498,29 @@ public class OperationManagerImpl implements OperationManager {
     }
 
     /**
+     * Creates a separate operation instance so an asynchronous notification retains the operation ID assigned to
+     * its device. Other property values are intentionally shared because they are read-only in this flow.
+     */
+    private Operation createNotificationOperation(Operation operation, int operationId) {
+        try {
+            Operation notificationOperation = operation.getClass().asSubclass(Operation.class)
+                    .getDeclaredConstructor().newInstance();
+            BeanInfo beanInfo = Introspector.getBeanInfo(operation.getClass(), Object.class);
+            for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
+                if (property.getReadMethod() != null && property.getWriteMethod() != null) {
+                    property.getWriteMethod().invoke(notificationOperation,
+                            property.getReadMethod().invoke(operation));
+                }
+            }
+            notificationOperation.setId(operationId);
+            return notificationOperation;
+        } catch (IntrospectionException | ReflectiveOperationException e) {
+            throw new IllegalStateException("Unable to create notification operation of type "
+                    + operation.getClass().getName(), e);
+        }
+    }
+
+    /**
      * Checks if the given operation is configured to skip immediate notifications.
      *
      * @param operation the operation to check
