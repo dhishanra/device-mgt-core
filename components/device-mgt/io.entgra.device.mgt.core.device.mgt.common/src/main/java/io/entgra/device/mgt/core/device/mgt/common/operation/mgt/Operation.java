@@ -23,10 +23,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
@@ -283,31 +279,6 @@ public class Operation implements Serializable {
 
     public void setInitiatedBy(String initiatedBy) {
         this.initiatedBy = initiatedBy;
-    }
-
-    /**
-     * Creates a shallow copy of this operation while preserving its runtime type.
-     * This also copies JavaBean properties declared by operation subclasses.
-     *
-     * @return a new operation instance containing the same property values
-     * @throws IllegalStateException if the operation cannot be copied
-     */
-    public Operation copy() {
-        try {
-            Operation copy = getClass().asSubclass(Operation.class).newInstance();
-            BeanInfo beanInfo = Introspector.getBeanInfo(getClass(), Object.class);
-            for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
-                if (property.getReadMethod() != null && property.getWriteMethod() != null) {
-                    property.getWriteMethod().invoke(copy, property.getReadMethod().invoke(this));
-                }
-            }
-            return copy;
-        } catch (IntrospectionException e) {
-            throw new IllegalStateException("Unable to inspect operation of type " + getClass().getName(), e);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Unable to create or populate operation copy of type "
-                    + getClass().getName(), e);
-        }
     }
 
     @Override
